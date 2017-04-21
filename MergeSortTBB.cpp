@@ -102,8 +102,8 @@ inline void merge(float Input[], float Output[], int p1, int r1, int p2, int r2,
     else if (threads > 1)
     {
         tbb::parallel_invoke(
-               []{ merge(Input, Output, p1, mid1-1, p2, mid2-1, p3, threads/2); },
-               []{ merge(Input, Output, mid1+1, r1, mid2, r2, mid3 +1, threads/2); } );
+               [=]{ merge(Input, Output, p1, mid1-1, p2, mid2-1, p3, threads/2); },
+               [=]{ merge(Input, Output, mid1+1, r1, mid2, r2, mid3 +1, threads/2); } );
     }
 }
 
@@ -128,8 +128,8 @@ inline void mergeSort_parallel_recursion(float Input[], float Output[], int l, i
     else if(threads > 1)
     {
         tbb::parallel_invoke(
-             []{ mergeSort_parallel_recursion(Input, Output, l, mid, !direction, threads/2); },
-             []{ mergeSort_parallel_recursion(Input, Output, mid+1, r, !direction, threads/2); } );
+             [=]{ mergeSort_parallel_recursion(Input, Output, l, mid, !direction, threads/2); },
+             [=]{ mergeSort_parallel_recursion(Input, Output, mid+1, r, !direction, threads/2); } );
     }
 
     if (direction)
@@ -252,7 +252,7 @@ int gen_input(float *A, int n, int input_type)
 int main(int argc, char **argv)
 {
 
-    if (argc != 2) {
+    if (argc != 3) {
         fprintf(stderr, "%s <n> <input_type> \n", argv[0]);
         fprintf(stderr, "input_type 0: uniform random\n");
         fprintf(stderr, "           1: already sorted\n");
@@ -279,8 +279,6 @@ int main(int argc, char **argv)
     assert(input_type <= 4);
 
     gen_input(A, n, input_type);
-
-    int alg_type = atoi(argv[3]);
 
     int num_iterations = 10;
 
